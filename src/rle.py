@@ -1,4 +1,12 @@
+from ast import Return
+from fileinput import filename
 from docopt import docopt
+from enum import Enum
+from io import SEEK_CUR
+from typing import BinaryIO
+from encrypt import *
+from datetime import datetime
+import os
 
 """
 This module implements a RLE compressor and decompressor. Two RLE
@@ -48,6 +56,7 @@ doc = """\
 Irá codificar ou descodificar um ficheiro
 
 Usage: 
+    pycoder.py
     pycoder.py (-c [-t TYPE] | -d) [-p PASSWD] FILE
     
 
@@ -62,11 +71,10 @@ Options:
     
 args = docopt(doc)
 
-from enum import Enum
-from io import SEEK_CUR
-from typing import BinaryIO
-from encrypt import *
-from datetime import datetime
+
+
+
+
 
 
 
@@ -244,6 +252,92 @@ def _int_to_byte(byte: int) -> bytes:
 
 crypt = CryptMethod.FERNET_SMALL
 
+if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and not args['FILE']:
+    print('hehe')
+    from tkinter import * 
+   
+    root = Tk()
+    root.title("PYCODER")
+
+    def comp_File_a():
+        try:
+            ent = entrada1.get()
+            out_f = ent + '.rle.'
+            encode_rle(RLEMethod.A, ent, out_f) 
+            os.remove(ent)
+            ent2 = entrada2.get()
+            if ent2:
+                encrypt_file(crypt, out_f, ent2)
+        except FileNotFoundError:
+            entrada1.delete(0,END)
+            entrada1.insert(0, "Erro: Ficheiro inexistente!")
+
+        
+
+    def comp_File_b():
+        try:
+            ent = entrada1.get()
+            out_f = ent + '.rle.'
+            encode_rle(RLEMethod.B, ent, out_f) 
+            os.remove(ent)
+            ent2 = entrada2.get()
+            if ent2:
+                encrypt_file(crypt, out_f, ent2)
+        except FileNotFoundError:
+            entrada1.delete(0,END)
+            entrada1.insert(0, "Erro: Ficheiro inexistente!")
+    
+    def unc_File():
+        try:
+            ent = entrada1.get()
+            ent2 = entrada2.get()
+            if ent2:
+                decrypt_file(crypt, ent, ent2)
+            out_f = ent[:-4]
+            decode_rle(ent, out_f)
+            os.remove(ent)
+        except FileNotFoundError:
+            entrada1.delete(0, END)
+            entrada1.insert(0,'Erro: Ficheiro inexistente!')
+        except ValueError:
+            entrada1.delete(0,END)
+            entrada1.insert(0,'Erro: Tipo de ficheiro não é .rle!')
+        
+        
+        
+
+    """ entrada de data """
+    entrada1 = Entry(root, width=50, bg="Grey", fg="yellow", borderwidth=8)
+    entrada2 = Entry(root, width=50, bg="Grey", fg="yellow", borderwidth=8)
+    
+
+    """ cria botao """
+    myButton1 = Button(root, text=" RLEMethod.A", padx=5, pady=5, command=comp_File_a, fg="black", bg="green")
+    myButton2 = Button(root, text=" RLEMethod.B", padx=5, pady=5, command=comp_File_b, fg="black", bg="green")
+    myButton3 = Button(root, text="Descomprimir ficheiro", padx=5, pady=5, command=unc_File, fg="black", bg="yellow")
+    
+    
+
+    """ cria label """
+    myLabel1 = Label(root, text="Password")
+    myLabel2 = Label(root, text="Nome do ficheiro: ")
+    
+
+
+    """ coloca no ecrã de acordo com row column.grip """
+    myLabel1.grid(row=3, column=0)
+    myLabel2.grid(row=1, column=0)
+
+    myButton1.grid(row=2, column=1)
+    myButton2.grid(row=2, column=2)
+    myButton3.grid(row=2, column=3)
+
+    entrada1.grid(row=1, column=2)
+    entrada2.grid(row=3, column=2)
+
+    root.mainloop()
+#:
+
 if args['--type']:
     if args['--type']== 1:
         tipo = RLEMethod.A
@@ -253,22 +347,38 @@ if args['--type']:
 
 
 if args['--ENCODE']:
-    out_F = args['FILE'] + '.rle'
-    encode_rle(tipo, args['FILE'], out_F)
-    if args['--passwd']:       
-        pw = args['--passwd']
-        encrypt_file(crypt, out_F, pw)
+    try:
+        out_F = args['FILE'] + '.rle'
+        encode_rle(tipo, args['FILE'], out_F)   
+        os.remove(args['FILE'])
+        if args['--passwd']:      
+            pw = args['--passwd']
+            encrypt_file(crypt, out_F, pw)
+    except FileNotFoundError:
+        print('Erro: Ficheiro inexistente!')
 
 elif args['--DECODE'] and args['--passwd']:
-    decrypt_file(crypt, args['FILE'], args['--passwd'])
-    exit_F = args['FILE']
-    out_F = exit_F[:-4]
-    decode_rle(args['FILE'], 'file') 
+    try:
+        decrypt_file(crypt, args['FILE'], args['--passwd'])
+        exit_F = args['FILE']
+        out_F = exit_F[:-4]
+        decode_rle(args['FILE'], out_F) 
+        os.remove(args['FILE'])
+    except FileNotFoundError:
+        print('Erro: Ficheiro inexistente!')
+    
 
 elif args['--DECODE']:
-    exit_F = args['FILE']
-    out_F = exit_F[:-4]
-    decode_rle(args['FILE'], out_F)
+    try:
+        exit_F = args['FILE']
+        out_F = exit_F[:-4]
+        decode_rle(args['FILE'], out_F)
+        os.remove(args['FILE'])
+    except FileNotFoundError:
+        print('Erro: Ficheiro inexistente!')
+    except ValueError:
+        print('Erro: Tipo de ficheiro não é .rle!')
+    
 
 
 

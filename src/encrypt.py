@@ -166,6 +166,7 @@ def decrypt_fernet_small(
         salt=salt,
         iterations=390000,
     )
+    
     key = base64.urlsafe_b64encode(kdf.derive(password))
     f = Fernet(key)
     token = f.decrypt(in_.read())
@@ -265,8 +266,10 @@ def _quick_tests():
 
     in_stream = BytesIO(out_stream.getvalue())
     out_stream = BytesIO()
+    
     decrypt_aes_cryptography(in_stream, out_stream, pwd)
     assert out_stream.getvalue() == test_small_data
+
     print("OK")
 #:
 
