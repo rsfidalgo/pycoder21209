@@ -312,7 +312,7 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
     root.title("PYCODER")
 
     is_on = True
-    inst2 = "Accesses files in the src directory\ninstructions to encrypt:\nEXAMPLE: Nome do ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file usinf CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do ficheiro: music.mp3.rle\npress Descomprimir ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use you password"
+    inst2 = "Accesses files in the main folder\ninstructions to encrypt:\nEXAMPLE: Nome do ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file usinf CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do ficheiro: music.mp3.rle\npress Descomprimir ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use you password"
     
     def comp_File_a():
         try:
