@@ -1,5 +1,6 @@
 from ast import Return
 from fileinput import filename
+from pickle import GLOBAL
 from docopt import docopt
 from enum import Enum
 from io import SEEK_CUR
@@ -9,6 +10,7 @@ from time import strftime,gmtime
 from datetime import datetime
 from time import time 
 import os
+
 
 """
 This module implements a RLE compressor and decompressor. Two RLE
@@ -296,14 +298,22 @@ def _int_to_byte(byte: int) -> bytes:
 
 crypt = CryptMethod.FERNET_SMALL
 
+
 #####################################################################################################################################################
+
+
 
 if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and not args['FILE']:
     from tkinter import * 
+
+    
    
     root = Tk()
     root.title("PYCODER")
 
+    is_on = True
+    inst2 = "Accesses files in the src directory\ninstructions to encrypt:\nEXAMPLE: Nome do ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file usinf CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do ficheiro: music.mp3.rle\npress Descomprimir ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use you password"
+    
     def comp_File_a():
         try:
             ent = entrada1.get()
@@ -357,9 +367,14 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
             entrada1.delete(0,END)
             entrada1.insert(0,'Erro: Ficheiro incompatível. Certifique-se que é .rle!')
         #:
-        except TypeError:
-            entrada2.insert(0,'Erro: certifique-se de que insere uma password!')
+        except TypeError as ex:
+            entrada1.insert(0,'Erro --> {ex}')
         #:
+    #:
+
+    def inst():
+        myLabelInst = Label(root, text=inst2) 
+        myLabelInst.grid(row=5, column=0)   
     #:
         
     """ entrada de data """
@@ -369,7 +384,8 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
     """ cria botao """
     myButton1 = Button(root, text=" RLEMethod.A", padx=5, pady=5, command=comp_File_a, fg="black", bg="green")
     myButton2 = Button(root, text=" RLEMethod.B", padx=5, pady=5, command=comp_File_b, fg="black", bg="green")
-    myButton3 = Button(root, text="Descomprimir ficheiro", padx=5, pady=5, command=unc_File, fg="black", bg="yellow")
+    myButton3 = Button(root, text="Descomprimir Ficheiro", padx=5, pady=5, command=unc_File, fg="black", bg="yellow")
+    myButtonINST = Button(root, text="instruções", padx=5, pady=5, command=inst, fg="black", bg="yellow")
     
     """ cria label """
     myLabel1 = Label(root, text="Password")
@@ -382,6 +398,7 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
     myButton1.grid(row=2, column=1)
     myButton2.grid(row=2, column=2)
     myButton3.grid(row=2, column=3)
+    myButtonINST.grid(row=4, column=3)
 
     entrada1.grid(row=1, column=2)
     entrada2.grid(row=3, column=2)
@@ -444,6 +461,6 @@ elif args['--DECODE']:
         print(f'Erro: Ficheiro incompatível. Certifique-se que é .rle!\n --> {ex} <--')
     #:
     except TypeError as ex:
-        print(f'Erro: Certifique-se de que insere uma password!\n --> {ex} <--')
+        print(f'Erro: Possivel problema com a password\n --> {ex} <--')
     #:
 #:
