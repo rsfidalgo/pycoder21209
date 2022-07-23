@@ -92,7 +92,7 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
     root = Tk()
     root.title("PYCODER")
 
-    inst2 = "Accesses files in the main folder\ninstructions to encrypt:\nEXAMPLE: Nome do ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file usinf CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do ficheiro: music.mp3.rle\npress Descomprimir ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use you password"
+    inst2 = "Accesses files in the main folder\ninstructions to encrypt:\nEXAMPLE: Nome do Ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file using CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do Ficheiro: music.mp3.rle\npress Descomprimir Ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use your password"
     
     def comp_File_a():
         try:
@@ -174,11 +174,11 @@ if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and no
     myButton1 = Button(root, text=" RLEMethod.A", padx=5, pady=5, command=comp_File_a, fg="black", bg="green")
     myButton2 = Button(root, text=" RLEMethod.B", padx=5, pady=5, command=comp_File_b, fg="black", bg="green")
     myButton3 = Button(root, text="Descomprimir Ficheiro", padx=5, pady=5, command=unc_File, fg="black", bg="yellow")
-    myButtonINST = Button(root, text="instruções", padx=5, pady=5, command=inst, fg="black", bg="yellow")
+    myButtonINST = Button(root, text="Instruções", padx=5, pady=5, command=inst, fg="black", bg="yellow")
     
     """ cria label """
     myLabel1 = Label(root, text="Password")
-    myLabel2 = Label(root, text="Nome do ficheiro: ")
+    myLabel2 = Label(root, text="Nome do Ficheiro: ")
     myLabelInst = Label(root)
     
     """ coloca no ecrã de acordo com row column.grip """
