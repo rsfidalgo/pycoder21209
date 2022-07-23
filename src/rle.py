@@ -1,15 +1,11 @@
 from ast import Return
 from fileinput import filename
 from pickle import GLOBAL
-from docopt import docopt
 from enum import Enum
 from io import SEEK_CUR
 from typing import BinaryIO
-from encrypt import *
-from time import strftime,gmtime
-from datetime import datetime
 from time import time 
-import os
+
 
 
 """
@@ -53,72 +49,13 @@ desenvolver um algoritmo de encriptação. Um algoritmo pedagogicamente interess
 seguro, e que se enquadra no espírito deste projecto, é a Cifra de Vigenère.
 
 
-
 """
-######################################################################################################################################
 
-doc = """\
-Irá compactar ou descompactar um ficheiro
-
-Usage: 
-    pycoder.py
-    pycoder.py (-c [-t TYPE] | -d) [-p PASSWD] FILE
-    
-
-
-Options:
-    -c --ENCODE                      Encriptar 
-    -d --DECODE                      Desencriptar 
-    -t TYPE --type                   Tipo [default: 2]
-    -p PASSWD --passwd               Password
-    FILE                             Ficheiro
-    """
-    
-args = docopt(doc)
-
-####################################################################################################################################
 def time_stamp_b():
     time_stamp_sec_b = int(time()).to_bytes(4,"big")
     return time_stamp_sec_b
 #:
 
-def decode_del (out_F):
-        decode_rle(out_F, out_F[:-4])
-        os.remove(out_F)
-#:
-
-def dvlv_met(file):
-    with open(file, 'rb') as _f:
-                curr = _f.read(1)
-                if curr == b'\x8a':
-                    op = '2'
-                    _m = b'\x8a'
-                    return op, _m
-                #:
-                elif curr == b'\x21':
-                    op = '1'
-                    _m = b'\x21'
-                    opi=int.from_bytes(_m, "big")
-                    return op, _m
-                #:
-    #:
-#:
-
-def exit_header(in_f, out_f, method, opcode):
-    data_hota = strftime(f"%Y-%m-%d %H:%M")
-    op=int.from_bytes(opcode, "big")
-    cab = f"Decompressed '{in_f}' into '{out_f}' using method {method} (opcode {op})\nCompression date/time: {data_hota}\n\n"
-
-    with open(out_f, 'r+') as f:
-        lines = f.readlines()
-        f.seek(0)
-        f.write(cab)
-        for line in lines:
-            f.write(line)
-        #:
-    #:
-#:
-###############################################################################################################################################
 __all__ = [
     'RLEMethod',
     'encode_rle',
@@ -129,8 +66,6 @@ class RLEMethod(Enum):
     A = b'\x21'      # 33 or b'!'
     B = b'\x8a'      # 138
 #:
-
-
 
 def encode_rle(
         method: RLEMethod,
@@ -292,175 +227,4 @@ def _int_to_byte(byte: int) -> bytes:
     b'\xfe'
     """
     return bytes([byte])
-#:
-
-######################################################################################################################################################
-
-crypt = CryptMethod.FERNET_SMALL
-
-
-#####################################################################################################################################################
-
-
-
-if not args['--DECODE'] and not args['--ENCODE'] and not args['--passwd'] and not args['FILE']:
-    from tkinter import * 
-
-    
-   
-    root = Tk()
-    root.title("PYCODER")
-
-    is_on = True
-    inst2 = "Accesses files in the main folder\ninstructions to encrypt:\nEXAMPLE: Nome do ficheiro: music.mp3\nPress RELMethod.A or RELMethod.B buttons to run RLE method of choice\nif a password is inserted in Password box it will encrypt file usinf CryptMethod.FERNET_SMALL along with the REL method.\n\ninstructions to decrypt:\n\nEXAMPLE:Nome do ficheiro: music.mp3.rle\npress Descomprimir ficheiro button to decompress the file\nif the file was encrypted with CryptMethod.FERNET_SMALL make sure to use you password"
-    
-    def comp_File_a():
-        try:
-            ent = entrada1.get()
-            out_f = ent + '.rle.'
-            encode_rle(RLEMethod.A, ent, out_f) 
-            os.remove(ent)
-            ent2 = entrada2.get()
-            if ent2:
-                encrypt_file(crypt, out_f, ent2)
-            #:
-        #:
-        except FileNotFoundError:
-            entrada1.delete(0,END)
-            entrada1.insert(0, "Erro: Ficheiro inexistente!")
-        #:
-    #:
-        
-    def comp_File_b():
-        try:
-            ent = entrada1.get()
-            out_f = ent + '.rle.'
-            encode_rle(RLEMethod.B, ent, out_f) 
-            os.remove(ent)
-            ent2 = entrada2.get()
-            if ent2:
-                encrypt_file(crypt, out_f, ent2)
-            #:
-        #:
-        except FileNotFoundError:
-            entrada1.delete(0,END)
-            entrada1.insert(0, "Erro: Ficheiro inexistente!")
-        #:
-    #:
-    
-    def unc_File():
-        try:
-            ent = entrada1.get()
-            ent2 = entrada2.get()
-            if ent2:
-                decrypt_file(crypt, ent, ent2)
-            #:
-            a, b = dvlv_met(ent)
-            decode_del(ent)
-            exit_header(ent,ent[:-4],a, b)
-        #:
-        except FileNotFoundError:
-            entrada1.delete(0, END)
-            entrada1.insert(0,'Erro: Ficheiro inexistente!')
-        #:
-        except ValueError:
-            entrada1.delete(0,END)
-            entrada1.insert(0,'Erro: Ficheiro incompatível. Certifique-se que é .rle!')
-        #:
-        except TypeError as ex:
-            entrada1.insert(0,'Erro --> {ex}')
-        #:
-    #:
-
-    def inst():
-        myLabelInst = Label(root, text=inst2) 
-        myLabelInst.grid(row=5, column=0)   
-    #:
-        
-    """ entrada de data """
-    entrada1 = Entry(root, width=50, bg="Grey", fg="yellow", borderwidth=8)
-    entrada2 = Entry(root, width=50, bg="Grey", fg="yellow", borderwidth=8)
-    
-    """ cria botao """
-    myButton1 = Button(root, text=" RLEMethod.A", padx=5, pady=5, command=comp_File_a, fg="black", bg="green")
-    myButton2 = Button(root, text=" RLEMethod.B", padx=5, pady=5, command=comp_File_b, fg="black", bg="green")
-    myButton3 = Button(root, text="Descomprimir Ficheiro", padx=5, pady=5, command=unc_File, fg="black", bg="yellow")
-    myButtonINST = Button(root, text="instruções", padx=5, pady=5, command=inst, fg="black", bg="yellow")
-    
-    """ cria label """
-    myLabel1 = Label(root, text="Password")
-    myLabel2 = Label(root, text="Nome do ficheiro: ")
-    
-    """ coloca no ecrã de acordo com row column.grip """
-    myLabel1.grid(row=3, column=0)
-    myLabel2.grid(row=1, column=0)
-
-    myButton1.grid(row=2, column=1)
-    myButton2.grid(row=2, column=2)
-    myButton3.grid(row=2, column=3)
-    myButtonINST.grid(row=4, column=3)
-
-    entrada1.grid(row=1, column=2)
-    entrada2.grid(row=3, column=2)
-
-    root.mainloop()
-############################################################################################################################:
-
-if args['--type']:
-    if args['--type'] == '1':
-        tipo = RLEMethod.A
-    #:
-    elif args['--type'] == '2':
-        tipo = RLEMethod.B
-    #:
-#:
- 
-if args['--ENCODE']:
-    try:
-        out_F = args['FILE'] + '.rle'
-        encode_rle(tipo, args['FILE'], out_F)   
-        os.remove(args['FILE'])
-        if args['--passwd']:      
-            pw = args['--passwd']
-            encrypt_file(crypt, out_F, pw)
-        #:
-    #:
-    except FileNotFoundError as ex:
-        print('Erro: Ficheiro inexistente!\n --> {ex} <--')
-    #:
-#:
-
-elif args['--DECODE'] and args['--passwd']:
-    try:
-        decrypt_file(crypt, args['FILE'], args['--passwd'])
-        exit_F = args['FILE']
-        out_F = exit_F[:-4]
-        a, b = dvlv_met(args['FILE'])
-        decode_del(args['FILE'])
-        exit_header(args['FILE'],out_F,a, b)
-    #:
-    except FileNotFoundError as ex:
-        print('Erro: Ficheiro inexistente!\n --> {ex} <--')
-    #:
-#:
-    
-
-elif args['--DECODE']:
-
-    try:
-        _F = args['FILE']
-        out_F = _F[:-4]
-        a, b = dvlv_met(args['FILE'])
-        decode_del(args['FILE'])
-        exit_header(args['FILE'],out_F,a, b)
-    #:
-    except FileNotFoundError as ex:
-        print(f'Erro: Ficheiro inexistente!\n --> {ex} <--')
-    #:
-    except ValueError as ex:
-        print(f'Erro: Ficheiro incompatível. Certifique-se que é .rle!\n --> {ex} <--')
-    #:
-    except TypeError as ex:
-        print(f'Erro: Possivel problema com a password\n --> {ex} <--')
-    #:
 #:
